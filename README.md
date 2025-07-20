@@ -23,6 +23,7 @@ Usually this could easily be done with shaders, but I needed a non shader soluti
 *  Hue - Saturation - Value Tool for making a palette that shifts the source colors.  Then can individually modify colors like normal after using the tool.
   * <img width="568" height="742" alt="image" src="https://github.com/user-attachments/assets/312cfebf-c789-4cc3-8e68-5d8112ec690e" />
 * Tool settings persist.  When opening the tool window it will auto load the last source texture.
+* I removed the ability to save the file anwyere in an effort to make it simpler and more suited for the naming relationship system.
 * Issues
   * It seems to mostly work.  However, when auto saving is enabled, I tried to prevent it from lagging like crazy when changing the colors, but sometimes it does throw some warnings about file modication data.  Couldn't figure out a way to avoid it. 
 
