@@ -1,5 +1,8 @@
 # Unity Lazy Palette Swapper
 
+Simple tool for modifying pixel art in Unity by changing specific colors.  It produces a new texture with the adjusted colors, which can then be used automatically in a sprite atlas or used directly.
+Usually this could easily be done with shaders, but I needed a non shader solution for my setup.
+
 ## Fork Additions:
 * Preview live changes of output texture
   * <img width="582" height="307" alt="image" src="https://github.com/user-attachments/assets/8f59ca52-624d-4d4c-9e76-73e6e55919f2" />\
