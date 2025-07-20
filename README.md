@@ -1,5 +1,30 @@
 # Unity Lazy Palette Swapper
 
+## Fork Additions:
+* Preview live changes of output texture
+  * <img width="582" height="307" alt="image" src="https://github.com/user-attachments/assets/8f59ca52-624d-4d4c-9e76-73e6e55919f2" />\
+  * Clicking either texture pings it in your project.
+* Auto save texture.  Allowing to see changes in the scene live.
+  * <img width="317" height="120" alt="image" src="https://github.com/user-attachments/assets/3657ecf6-03ef-4e23-b38c-4b0c050d0e4f" />
+* Palette color limit to prevent crashing the tool.
+  * <img width="261" height="56" alt="image" src="https://github.com/user-attachments/assets/d8bde479-56d4-408b-9ccd-52c8621175c1" />
+* New texture copies the source texture import settings (Pixels Per Unit, Filter Mode, etc).
+  * <img width="403" height="233" alt="image" src="https://github.com/user-attachments/assets/75089ede-237f-4fea-9a85-5d02e9844790" />
+* Creating multiple palettes that are all linked to the same source texture that can be modified easily later.
+  * This is done through file names
+  * <img width="565" height="113" alt="image" src="https://github.com/user-attachments/assets/2ab05efe-502a-499a-a545-62b783592b0a" />
+  * When the source texture is imported into the tool, all the related palettes are populated (as long as they are in the same folder).  Allowing you to switch between palettes easily to modify and copy them to start new palettes.
+    * <img width="276" height="119" alt="image" src="https://github.com/user-attachments/assets/3f3de499-ef39-4b88-8c12-4a2efda7beed" />
+* Buttons to reset the palette color back to the original source color (on the right side) and a button to reset all the colors back to the source.
+  * <img width="560" height="224" alt="image" src="https://github.com/user-attachments/assets/586a33ea-ac3f-4e8f-a03a-d23174dba69b" />
+*  Hue - Saturation - Value Tool for making a palette that shifts the source colors.  Then can individually modify colors like normal after using the tool.
+  * <img width="568" height="742" alt="image" src="https://github.com/user-attachments/assets/312cfebf-c789-4cc3-8e68-5d8112ec690e" />
+* Tool settings persist.  When opening the tool window it will auto load the last source texture.
+* Issues
+  * It seems to mostly work.  However, when auto saving is enabled, I tried to prevent it from lagging like crazy when changing the colors, but sometimes it does throw some warnings about file modication data.  Couldn't figure out a way to avoid it. 
+
+--------------------
+
 The Lazy Palette Swapper is tool that allows users to easily swap the Colour Palettes of their Pixel Artwork<br>
 (individual sprites or spritesheets) within the Unity Editor.
 
