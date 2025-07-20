@@ -22,6 +22,8 @@ Usually this could easily be done with shaders, but I needed a non shader soluti
   * <img width="560" height="224" alt="image" src="https://github.com/user-attachments/assets/586a33ea-ac3f-4e8f-a03a-d23174dba69b" />
 *  Hue - Saturation - Value Tool for making a palette that shifts the source colors.  Then can individually modify colors like normal after using the tool.
   * <img width="568" height="742" alt="image" src="https://github.com/user-attachments/assets/312cfebf-c789-4cc3-8e68-5d8112ec690e" />
+* Added context menu when right clicking on a texture
+  * <img width="386" height="198" alt="image" src="https://github.com/user-attachments/assets/15076a6d-5b89-4904-b927-5451159db3a2" />
 * Tool settings persist.  When opening the tool window it will auto load the last source texture.
 * I removed the ability to save the file anwyere in an effort to make it simpler and more suited for the naming relationship system.
 * Issues
