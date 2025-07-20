@@ -38,12 +38,45 @@ namespace Uee.PaletteSwapper
         private const float MIN_TIME_BETWEEN_UPDATES = 1f; // Minimum time in seconds between texture updates
         private static float _lastUpdateTime = 0f; // Track when the last texture update happened
 
-        [MenuItem("Lazy-Jedi/Tools/Lazy Palette Swapper", priority = 400)]
+        [MenuItem("Tools/Pixel Palette Swapper", priority = 400)]
         public static void OpenWindow()
         {
-            Window = GetWindow<PaletteSwapWindow>("Lazy Palette Swapper");
+            Window = GetWindow<PaletteSwapWindow>("Pixel Palette Swapper");
             Window.minSize = new Vector2(580, 680);
             Window.Show();
+        }
+
+        // Context menu item for opening texture in Palette Swapper
+        [MenuItem("Assets/Open in Palette Swapper", priority = 200)]
+        public static void OpenTextureInPaletteSwapper()
+        {
+            // Get the selected texture
+            Texture2D selectedTexture = Selection.activeObject as Texture2D;
+            if (selectedTexture == null)
+            {
+                Debug.LogWarning("Please select a texture to open in Palette Swapper.");
+                return;
+            }
+
+            // Open or focus the window
+            if (Window == null)
+            {
+                Window = GetWindow<PaletteSwapWindow>("Pixel Palette Swapper");
+                Window.minSize = new Vector2(580, 680);
+            }
+
+            Window.Show();
+            Window.Focus();
+
+            // Set the selected texture as the source
+            Window.SetSourceTexture(selectedTexture);
+        }
+
+        // Validate the context menu item - only show for textures
+        [MenuItem("Assets/Open in Palette Swapper", true)]
+        public static bool ValidateOpenTextureInPaletteSwapper()
+        {
+            return Selection.activeObject is Texture2D;
         }
 
         #endregion
@@ -930,6 +963,97 @@ namespace Uee.PaletteSwapper
             _newColors = null;
             _newColorsCount = 0;
             if (ENABLE_DEBUG_LOGS) Debug.Log("ResetColorLists() - Color lists cleared");
+        }
+
+        /// <summary>
+        /// Sets the source texture and initializes all related data
+        /// </summary>
+        /// <param name="texture">The texture to set as source</param>
+        public void SetSourceTexture(Texture2D texture)
+        {
+            if (ENABLE_DEBUG_LOGS) Debug.Log($"SetSourceTexture() called with texture: {texture?.name ?? "null"}");
+
+            _source = texture;
+
+            // Handle source texture change
+            _sourcePath = AssetDatabase.GetAssetPath(_source);
+            if (ENABLE_DEBUG_LOGS) Debug.Log($"Source path set to: {_sourcePath}");
+
+            if (!string.IsNullOrEmpty(_sourcePath))
+            {
+                // Disable HSV tool when source texture changes
+                _useHsvTool = false;
+                string sourcePathDirectory = Path.GetDirectoryName(_sourcePath);
+                string originalFilename = Path.GetFileNameWithoutExtension(_sourcePath);
+                _extension = $"{Path.GetExtension(_sourcePath)}";
+                if (ENABLE_DEBUG_LOGS) Debug.Log($"Directory: {sourcePathDirectory}, Filename: {originalFilename}, Extension: {_extension}");
+
+                // Find existing palette textures
+                FindExistingPalettes(sourcePathDirectory, originalFilename);
+                if (ENABLE_DEBUG_LOGS) Debug.Log($"Found {_existingPalettePaths.Count} existing palettes");
+
+                // Set default palette name based on existing palettes
+                if (_existingPalettePaths.Count == 0)
+                {
+                    _customPaletteName = "New";
+                    if (ENABLE_DEBUG_LOGS) Debug.Log("No existing palettes found, setting custom palette name to 'New'");
+                }
+                else
+                {
+                    _customPaletteName = string.Empty;
+                    // Select the first palette if any exist
+                    _selectedPaletteIndex = 0;
+                    _outputPath = _existingPalettePaths[_selectedPaletteIndex];
+                    _filename = Path.GetFileNameWithoutExtension(_outputPath);
+                    if (ENABLE_DEBUG_LOGS) Debug.Log($"Existing palettes found, selected index 0: {_outputPath}");
+                }
+
+                // Set default output path with _palette_New suffix
+                _filename = $"{originalFilename}_palette_New";
+                _outputPath = Path.Combine(sourcePathDirectory, $"{_filename}{_extension}");
+                if (ENABLE_DEBUG_LOGS) Debug.Log($"Default output path set to: {_outputPath}");
+
+                ResetColorLists();
+                if (ENABLE_DEBUG_LOGS) Debug.Log("ResetColorLists() called");
+
+                // Always get palette when texture is loaded
+                if (_source != null)
+                {
+                    if (ENABLE_DEBUG_LOGS) Debug.Log("Source texture is not null, calling GetPalettes()");
+                    if (USE_ASYNC)
+                    {
+                        if (ENABLE_DEBUG_LOGS) Debug.Log("Using async mode for GetPalettes");
+                        _getPalettesTask = Task.Run(GetPalettes, _cancellationToken);
+                    }
+                    else
+                    {
+                        if (ENABLE_DEBUG_LOGS) Debug.Log("Using sync mode for GetPalettes");
+                        GetPalettes();
+                    }
+                }
+                else
+                {
+                    if (ENABLE_DEBUG_LOGS) Debug.Log("Source texture is null, not calling GetPalettes()");
+                }
+
+                // Save settings when source texture changes
+                SaveEditorPrefs();
+            }
+            else
+            {
+                // Source texture was set to null, clear everything
+                _sourcePath = string.Empty;
+                _outputPath = string.Empty;
+                _filename = string.Empty;
+                _extension = string.Empty;
+                _existingPalettePaths.Clear();
+                _selectedPaletteIndex = 0;
+                ResetColorLists();
+                SaveEditorPrefs();
+            }
+
+            // Force a repaint to update the UI
+            Repaint();
         }
 
         private void ResetOutputPaletteForSelection()
