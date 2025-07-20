@@ -35,7 +35,7 @@ namespace Uee.PaletteSwapper
                     for (int x = 0; x < width; x++)
                     {
                         Color32 pixelColor = source.GetPixel(x, y).ToColor32();
-                        if (pixelColor.a <= ignoreColorsWithAlpha) continue;
+                        if (pixelColor.a < ignoreColorsWithAlpha) continue;
                         int index = sourceColors.IndexOf(pixelColor);
 
                         if (index > -1)
